@@ -52,7 +52,9 @@
   ],
   "dependencies": {
     "@cesium/engine": "^16.0.0",
-    "@cesium/widgets": "^11.1.0"
+    "@cesium/widgets": "^11.1.0",
+    "@mapbox/vector-tile": "^2.0.3",
+    "pbf": "^4.0.1"
   },
   "devDependencies": {
     "@cesium/eslint-config": "^12.0.0",

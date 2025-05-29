@@ -1,10 +1,10 @@
-// eslint-disable-next-line no-undef
 window.CESIUM_BASE_URL = window.CESIUM_BASE_URL
   ? window.CESIUM_BASE_URL
   : "../../Build/CesiumUnminified/";
 
 import {
   Cartesian3,
+  Color,
   defined,
   formatError,
   Math as CesiumMath,
@@ -20,6 +20,7 @@ import {
   Viewer,
   viewerCesiumInspectorMixin,
   viewerDragDropMixin,
+  MVTPrimitive,
 } from "../../Build/CesiumUnminified/index.js";
 
 async function main() {
@@ -215,6 +216,92 @@ async function main() {
       });
     }
   }
+  const proxyUrl = `https://yunwu.gzpi.com.cn:9001/vector-tiles/vector/renhengyi/default/1324/cupid_geom_metric/{z}/{x}/{y}.pbf`;
+
+  // Create and load a MVT source using a template URL
+  const mvtPrimitive = new MVTPrimitive({
+    name: "MVT Layer",
+    clampToGround: true, // Set to true to clamp the tiles to the ground
+    projection: "geographic", // Set the projection to Geographic
+    viewer: viewer,
+    style: {
+      stroke: Color.WHITE,
+      strokeWidth: 5, // Make lines thicker for better visibility
+      fill: Color.fromBytes(140, 170, 90, 150),
+      pointColor: Color.PINK,
+      pointSize: 10, // Make points larger for better visibility
+    },
+  });
+
+  // Load from a URL template (XYZ format)
+  mvtPrimitive.load(proxyUrl);
+
+  // Add to scene primitives
+  viewer.scene.primitives.add(mvtPrimitive);
+
+  // Update when the camera view changes
+  viewer.camera.moveEnd.addEventListener(() => {
+    const rectangle = viewer.camera.computeViewRectangle();
+    const zoom = Math.min(
+      Math.max(
+        Math.round(
+          Math.log2(
+            (6378137 * Math.PI) / viewer.camera.positionCartographic.height,
+          ),
+        ),
+        0,
+      ),
+      20,
+    );
+
+    mvtPrimitive.updateViewport({
+      rectangle: rectangle,
+      zoom: zoom,
+    });
+  });
+
+  const proxyUrl2 = `https://yunwu.gzpi.com.cn:9001/vector-tiles/vector/renhengyi/default/1323/cupid_geom_metric/{z}/{x}/{y}.pbf`;
+
+  // Create and load a MVT source using a template URL
+  const mvtPrimitive2 = new MVTPrimitive({
+    name: "MVT Layer",
+    clampToGround: true, // Set to true to clamp the tiles to the ground
+    projection: "geographic", // Set the projection to Geographic
+    viewer: viewer,
+    style: {
+      stroke: Color.WHITE,
+      strokeWidth: 5, // Make lines thicker for better visibility
+      fill: Color.fromBytes(140, 170, 90, 150),
+      pointColor: Color.PINK,
+      pointSize: 10, // Make points larger for better visibility
+    },
+  });
+
+  // Load from a URL template (XYZ format)
+  mvtPrimitive2.load(proxyUrl2);
+
+  // Add to scene primitives
+  viewer.scene.primitives.add(mvtPrimitive2);
+
+  // Update when the camera view changes
+  viewer.camera.moveEnd.addEventListener(() => {
+    const rectangle = viewer.camera.computeViewRectangle();
+    const zoom = Math.min(
+      Math.max(
+        Math.round(
+          Math.log2(
+            (6378137 * Math.PI) / viewer.camera.positionCartographic.height,
+          ),
+        ),
+        0,
+      ),
+      20,
+    );
+    mvtPrimitive2.updateViewport({
+      rectangle: rectangle,
+      zoom: zoom,
+    });
+  });
 
   const camera = viewer.camera;
   function saveCamera() {
